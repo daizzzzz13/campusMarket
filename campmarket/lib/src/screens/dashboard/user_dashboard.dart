@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'rent_screen.dart'; // Import the RentScreen
 
 class UserDashboard extends StatelessWidget {
   const UserDashboard({super.key});
@@ -12,7 +13,7 @@ class UserDashboard extends StatelessWidget {
           _buildAppBar(),
 
           // Category Buttons
-          _buildCategorySection(),
+          _buildCategorySection(context),
 
           // Search Bar
           _buildSearchBar(),
@@ -70,24 +71,31 @@ class UserDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildCategorySection() {
+  Widget _buildCategorySection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildCategoryButton('Rent'),
-          _buildCategoryButton('Exchange'),
-          _buildCategoryButton('Sell'),
-          _buildCategoryButton('Tutoring'),
+          _buildCategoryButton(context, 'Rent'),
+          _buildCategoryButton(context, 'Exchange'),
+          _buildCategoryButton(context, 'Sell'),
+          _buildCategoryButton(context, 'Tutoring'),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryButton(String text) {
+  Widget _buildCategoryButton(BuildContext context, String text) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        if (text == 'Rent') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RentScreen()),
+          );
+        }
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,

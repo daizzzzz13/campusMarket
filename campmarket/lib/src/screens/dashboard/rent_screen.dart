@@ -13,96 +13,67 @@ class _RentScreenState extends State<RentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image with Opacity
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/background.png',
-              fit: BoxFit.cover,
-              color: Colors.black.withOpacity(0.1),
-              colorBlendMode: BlendMode.darken,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Category Buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildCategoryButton('Rent'),
+                _buildCategoryButton('Exchange'),
+                _buildCategoryButton('Sell'),
+                _buildCategoryButton('Tutoring'),
+              ],
             ),
-          ),
+            const SizedBox(height: 20),
 
-          Column(
-            children: [
-              // Top App Bar
-              Container(
-                padding: const EdgeInsets.only(top: 40, left: 16, right: 16, bottom: 10),
-                color: Colors.green,
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: const AssetImage('assets/images/logo.png'),
-                      radius: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Campus Marketing',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    const Icon(Icons.notifications, color: Colors.white),
-                  ],
+            // Search Bar
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Search',
+                suffixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
+            ),
+            const SizedBox(height: 20),
 
-              // Category Buttons
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildCategoryButton('Rent'),
-                    _buildCategoryButton('Exchange'),
-                    _buildCategoryButton('Sell'),
-                    _buildCategoryButton('Tutoring'),
-                  ],
-                ),
+            // Rent Items Section
+            const Text(
+              'Rent Items',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
+            ),
+            const SizedBox(height: 16),
 
-              // Search Bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    suffixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: [
+                  _buildPopularItem(
+                    'Scientific Calculator',
+                    '₱20 per Hour',
+                    'assets/images/calculator.jpg',
                   ),
-                ),
+                  _buildPopularItem(
+                    'Lab Gown',
+                    '₱20 per Hour',
+                    'assets/images/lab_gown.jpg',
+                  ),
+                ],
               ),
-
-              // Rent Items Section
-              if (activeCategory == 'Rent') _buildRentSection(),
-
-              const Spacer(),
-
-              // Bottom Navigation Bar
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                color: const Color(0xFF4DE165),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildNavItem(Icons.home, activeCategory == 'Rent'),
-                    _buildNavItem(Icons.store, false),
-                    _buildNavItem(Icons.add_circle_outline, false),
-                    _buildNavItem(Icons.shopping_cart, false),
-                    _buildNavItem(Icons.person, false),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -113,65 +84,23 @@ class _RentScreenState extends State<RentScreen> {
       onPressed: () {
         setState(() {
           activeCategory = text;
-          print('Active category changed to $activeCategory');
         });
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.green : Colors.white,
+        backgroundColor: isSelected ? Colors.green : Colors.blue[200],
         foregroundColor: isSelected ? Colors.white : Colors.black,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-        ),
-        elevation: isSelected ? 5 : 0,
-      ).copyWith(
-        side: MaterialStateProperty.all(
-          BorderSide(color: isSelected ? Colors.green : Colors.grey),
         ),
       ),
       child: Text(text),
     );
   }
 
-  Widget _buildRentSection() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Popular',
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildPopularItem(
-                'Scientific Calculator',
-                '₱50 per Day',
-                'assets/images/calculator.jpg',
-              ),
-              _buildPopularItem(
-                'Lab Gown',
-                '₱20 per Hour',
-                'assets/images/lab_gown.jpg',
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildPopularItem(String title, String price, String imagePath) {
     return Container(
-      width: 150,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -188,7 +117,7 @@ class _RentScreenState extends State<RentScreen> {
               topLeft: Radius.circular(10),
               topRight: Radius.circular(10),
             ),
-            child: Image.asset(imagePath, height: 100, width: 150, fit: BoxFit.cover),
+            child: Image.asset(imagePath, height: 100, width: double.infinity, fit: BoxFit.cover),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -196,12 +125,25 @@ class _RentScreenState extends State<RentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Item for Rent: $title',
+                  title,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
                   price,
-                  style: const TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.green),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle rent action
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Rent Now', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -210,12 +152,5 @@ class _RentScreenState extends State<RentScreen> {
       ),
     );
   }
-
-  Widget _buildNavItem(IconData icon, bool isSelected) {
-    return Icon(
-      icon,
-      color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-      size: 30,
-    );
-  }
 }
+
