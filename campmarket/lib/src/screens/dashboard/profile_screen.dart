@@ -1,159 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'user_dashboard.dart'; // Import the UserDashboard
-import 'store_screen.dart'; // Import the StoreScreen
-import 'add_item_screen.dart'; // Import the AddItemScreen
-import 'cart_screen.dart'; // Import the CartScreen
+import 'main_navigation.dart'; // Ensure this import is present
+import 'user_dashboard.dart'; // Import UserDashboard
+import 'cart_screen.dart';    // Import CartScreen
+import 'store_screen.dart';   // Import StoreScreen
+import 'add_item_screen.dart'; // Import AddItemScreen
+import '../auth/login_screen.dart'; // Adjust the path to your LoginScreen
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  _ProfileScreenState createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  int _selectedIndex = 4; // Assuming profile is the 5th item
-
-  // List of screens to navigate to
-  final List<Widget> _screens = [
-    UserDashboard(), // Home
-    StoreScreen(),   // Store
-    AddItemScreen(), // Add Item
-    CartScreen(),    // Cart
-    ProfileScreen(), // Profile
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    // Navigate to the selected screen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => _screens[index]),
-    );
-  }
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/campus_background.jpg', // Replace with your background image path
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Campus Marketing',
-                      style: GoogleFonts.irishGrover(
-                        fontSize: 24,
-                        color: Colors.green,
-                      ),
-                    ),
-                    Icon(Icons.notifications, color: Colors.black),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // User Info Box
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundImage: AssetImage('assets/images/profile.jpg'), // Replace with user image
-                          ),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Sudai Alhad',
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                'sudai.alhad@one.uz.edu.ph',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '⭐ 4.9',
-                                style: TextStyle(color: Colors.yellow),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to dashboard
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        ),
-                        child: const Text('Dashboard', style: TextStyle(color: Colors.white)),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Menu Items
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-                    ),
-                    child: ListView(
-                      children: [
-                        _buildMenuItem(Icons.inbox, 'Inbox'),
-                        _buildMenuItem(Icons.business_center, 'Rent Item'),
-                        _buildMenuItem(Icons.swap_horiz, 'Exchange'),
-                        _buildMenuItem(Icons.sell, 'Sell'),
-                        _buildMenuItem(Icons.video_library, 'Tutoring Video'),
-                        _buildMenuItem(Icons.help, 'Help and Support'),
-                        _buildMenuItem(Icons.settings, 'Setting'),
-                        _buildMenuItem(Icons.logout, 'Log Out', isExit: true), // Exit button
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: const Color(0xFF4DE165),
       ),
-      // Bottom Navigation Bar
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // User Info
+            const CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage('https://example.com/profile.jpg'), // Replace with actual image URL
+            ),
+            const SizedBox(height: 16),
+            const Text('Sudai Alhad', style: TextStyle(fontSize: 24)),
+            const Text('sudai.alhad@one.uz.edu.ph', style: TextStyle(fontSize: 16)),
+            const Text('⭐ 4.9', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 16),
+
+            // Functional Icons
+            Expanded(
+              child: ListView(
+                children: [
+                  _buildListTile(context, Icons.inbox, 'Inbox', () {
+                    // Navigate to Inbox screen
+                  }),
+                  _buildListTile(context, Icons.shopping_cart, 'Rent Item', () {
+                    // Navigate to Rent Item screen
+                  }),
+                  _buildListTile(context, Icons.swap_horiz, 'Exchange', () {
+                    // Navigate to Exchange screen
+                  }),
+                  _buildListTile(context, Icons.label, 'Sell', () {
+                    // Navigate to Sell screen
+                  }),
+                  _buildListTile(context, Icons.video_library, 'Tutoring Video', () {
+                    // Navigate to Tutoring Video screen
+                  }),
+                  _buildListTile(context, Icons.help, 'Help and Support', () {
+                    // Navigate to Help and Support screen
+                  }),
+                  _buildListTile(context, Icons.settings, 'Setting', () {
+                    // Navigate to Settings screen
+                  }),
+                  _buildListTile(context, Icons.logout, 'Log Out', () {
+                    _logout(context); // Call the logout function
+                  }),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -165,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             label: 'Store',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline),
+            icon: Icon(Icons.add_circle_outline), // Add icon
             label: 'Add',
           ),
           BottomNavigationBarItem(
@@ -177,26 +89,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
             label: 'Profile',
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: 4, // Set the index for the Profile screen
         selectedItemColor: Colors.green,
         unselectedItemColor: Colors.black,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          // Handle navigation based on the selected index
+          if (index != 4) {
+            // Navigate to the selected screen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) {
+                switch (index) {
+                  case 0:
+                    return const UserDashboard(); // Home
+                  case 1:
+                    return const StoreScreen(); // Store
+                  case 2:
+                    return const AddItemScreen(); // Add Item
+                  case 3:
+                    return const CartScreen(); // Cart
+                  default:
+                    return const ProfileScreen(); // Stay on Profile
+                }
+              }),
+            );
+          }
+        },
       ),
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String title, {bool isExit = false}) {
+  void _logout(BuildContext context) {
+    // Clear user session (e.g., remove token, clear preferences)
+    // Example: await SharedPreferences.getInstance().then((prefs) => prefs.clear());
+
+    // Navigate to the login screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()), // Adjust to your actual login screen
+    );
+  }
+
+  Widget _buildListTile(BuildContext context, IconData icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: isExit ? Colors.red : Colors.black),
+      leading: Icon(icon),
       title: Text(title),
-      onTap: () {
-        if (isExit) {
-          // Handle exit action
-          // For example, show a confirmation dialog or navigate to the login screen
-        } else {
-          // Handle other menu item taps
-        }
-      },
+      onTap: onTap,
     );
   }
 }
