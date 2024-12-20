@@ -1,8 +1,64 @@
 import 'package:flutter/material.dart';
 import 'rent_screen.dart'; // Import the RentScreen
+import 'profile_screen.dart'; // Import the ProfileScreen
+import 'store_screen.dart'; // Import the StoreScreen
+import 'add_item_screen.dart'; // Import the AddItemScreen
+import 'cart_screen.dart'; // Import the CartScreen
 
-class UserDashboard extends StatelessWidget {
+class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
+
+  @override
+  _UserDashboardState createState() => _UserDashboardState();
+}
+
+class _UserDashboardState extends State<UserDashboard> {
+  int _selectedIndex = 0; // Track the selected index
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate to the corresponding screen based on the selected index
+    switch (index) {
+      case 0:
+        // Home
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const UserDashboard()),
+        );
+        break;
+      case 1:
+        // Store
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const StoreScreen()),
+        );
+        break;
+      case 2:
+        // Add Item
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AddItemScreen()),
+        );
+        break;
+      case 3:
+        // Cart
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CartScreen()),
+        );
+        break;
+      case 4:
+        // Profile
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +80,7 @@ class UserDashboard extends StatelessWidget {
           // Top Rated Users Section
           _buildTopRatedUsersSection(),
 
-          Spacer(),
+          const Spacer(),
 
           // Bottom Navigation Bar
           _buildBottomNavigationBar(),
@@ -204,27 +260,33 @@ class UserDashboard extends StatelessWidget {
   }
 
   Widget _buildBottomNavigationBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      color: const Color(0xFF4DE165),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildNavItem(Icons.home, true),
-          _buildNavItem(Icons.store, false),
-          _buildNavItem(Icons.add_circle_outline, false),
-          _buildNavItem(Icons.shopping_cart, false),
-          _buildNavItem(Icons.person, false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, bool isSelected) {
-    return Icon(
-      icon,
-      color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-      size: 30,
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_circle_outline),
+          label: 'Add',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.black,
+      onTap: _onItemTapped,
     );
   }
 }

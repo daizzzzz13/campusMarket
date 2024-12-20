@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main_navigation.dart';
 
 class RentScreen extends StatefulWidget {
   const RentScreen({super.key});
