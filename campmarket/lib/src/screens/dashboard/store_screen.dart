@@ -1,76 +1,106 @@
 import 'package:flutter/material.dart';
-import 'main_navigation.dart'; // Ensure this import is present
-import 'user_dashboard.dart'; // Import UserDashboard
-import 'cart_screen.dart';    // Import CartScreen
-import 'add_item_screen.dart'; // Import AddItemScreen
-import 'profile_screen.dart'; // Import ProfileScreen
+import 'rent_screen.dart';
+import 'exchange_screen.dart';
+import 'sell_screen.dart';
+import 'tutoring_screen.dart';
+import 'add_item_screen.dart';
+import 'cart_screen.dart';
+import 'user_dashboard.dart';
 
-class StoreScreen extends StatelessWidget {
-  const StoreScreen({Key? key}) : super(key: key);
+class StoreScreen extends StatefulWidget {
+  final int currentIndex;
+  const StoreScreen({Key? key, this.currentIndex = 1}) : super(key: key);
+
+  @override
+  State<StoreScreen> createState() => _StoreScreenState();
+}
+
+class _StoreScreenState extends State<StoreScreen> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.currentIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Store'),
-        backgroundColor: const Color(0xFF4DE165),
       ),
       body: Center(
-        child: const Text(
-          'Welcome to the store!',
-          style: TextStyle(fontSize: 24, color: Colors.red), // Optional styling
-        ),
+        child: const Text('Store Items'),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.store),
-            label: 'Store',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline), // Add icon
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: 1, // Set the index for the Store screen
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.black,
-        onTap: (index) {
-          // Handle navigation based on the selected index
-          if (index != 1) {
-            // Navigate to the selected screen
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_circle_outline),
+          label: 'Add',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.black,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+        switch (index) {
+          case 0:
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) {
-                switch (index) {
-                  case 0:
-                    return const UserDashboard(); // Home
-                  case 2:
-                    return const AddItemScreen(); // Add Item
-                  case 3:
-                    return const CartScreen(); // Cart
-                  case 4:
-                    return const ProfileScreen(); // Profile
-                  default:
-                    return const StoreScreen(); // Stay on Store
-                }
-              }),
+              MaterialPageRoute(builder: (context) => const UserDashboard()),
             );
-          }
-        },
-      ),
+            break;
+          case 1:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const StoreScreen()),
+            );
+            break;
+          case 2:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AddItemScreen()),
+            );
+            break;
+          case 3:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CartScreen()),
+            );
+            break;
+          case 4:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const UserDashboard()),
+            );
+            break;
+        }
+      },
     );
   }
 }

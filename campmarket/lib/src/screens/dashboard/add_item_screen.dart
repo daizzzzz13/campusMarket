@@ -58,11 +58,11 @@ class AddItemScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Category Dropdown
-              _buildDropdown('Category *', ['Books', 'Electronics', 'Clothing']),
+              _buildDropdown('Category *', ['Rent', 'Sell', 'Exchange', 'Tutoring Video']),
               const SizedBox(height: 16),
 
               // Condition Dropdown
-              _buildDropdown('Condition *', ['New', 'Used']),
+              _buildDropdown('Condition *', ['New', 'Used', 'Old', 'Damaged']),
               const SizedBox(height: 16),
 
               // Price Field

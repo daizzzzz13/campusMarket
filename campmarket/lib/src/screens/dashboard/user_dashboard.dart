@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'rent_screen.dart'; // Import the RentScreen
-import 'profile_screen.dart'; // Import the ProfileScreen
-import 'store_screen.dart'; // Import the StoreScreen
-import 'add_item_screen.dart'; // Import the AddItemScreen
-import 'cart_screen.dart'; // Import the CartScreen
+import 'profile_screen.dart';  // Only import ProfileScreen from here
+import 'exchange_screen.dart';  // Make sure this import is present
+import 'store_screen.dart';
+import 'add_item_screen.dart';
+import 'cart_screen.dart';
+import 'sell_screen.dart';
+import 'tutoring_screen.dart';
+import 'rent_screen.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -133,33 +136,61 @@ class _UserDashboardState extends State<UserDashboard> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildCategoryButton(context, 'Rent'),
-          _buildCategoryButton(context, 'Exchange'),
-          _buildCategoryButton(context, 'Sell'),
-          _buildCategoryButton(context, 'Tutoring'),
+          _buildCategoryButton('Rent'),
+          _buildCategoryButton('Exchange'),
+          _buildCategoryButton('Sell'),
+          _buildCategoryButton('Tutoring'),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryButton(BuildContext context, String text) {
+  Widget _buildCategoryButton(String text) {
     return ElevatedButton(
       onPressed: () {
-        if (text == 'Rent') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RentScreen()),
-          );
+        // Navigate to the corresponding screen using pushReplacement
+        switch (text) {
+          case 'Rent':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const RentScreen()),
+            );
+            break;
+          case 'Exchange':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ExchangeScreen()),
+            );
+            break;
+          case 'Sell':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SellScreen()),
+            );
+            break;
+          case 'Tutoring':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TutoringScreen()),
+            );
+            break;
         }
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: text == 'Rent' ? Colors.blue[200] : 
+                        text == 'Exchange' ? Colors.blue[200] : 
+                        text == 'Sell' ? Colors.blue[200] : 
+                        Colors.blue[200],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      child: Text(text),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.black,
+        ),
+      ),
     );
   }
 
@@ -193,11 +224,14 @@ class _UserDashboardState extends State<UserDashboard> {
             ),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // Use a GridView for better layout
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
-              _buildPopularItem('Scientific Calculator', 'P50 per Day', 'assets/images/calculator.jpg'),
-              _buildPopularItem('Lab Gown', 'P30 per Day', 'assets/images/lab_gown.jpg'),
+              _buildPopularItem('Sci-Cal', '₱10 per Hour', 'assets/images/calculator.jpg'),
+              _buildPopularItem('Lab Gown', '₱20 per Hour', 'assets/images/lab_gown.jpg'),
             ],
           ),
         ],
@@ -207,16 +241,27 @@ class _UserDashboardState extends State<UserDashboard> {
 
   Widget _buildPopularItem(String title, String price, String imagePath) {
     return Container(
-      width: 150,
+      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(imagePath, height: 100, width: 100, fit: BoxFit.cover),
-          Text('Item for Rent: $title'),
-          Text(price, style: const TextStyle(color: Colors.red)),
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+            child: Image.asset(imagePath, height: 100, width: double.infinity, fit: BoxFit.cover),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Item for Rent: $title', style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(price, style: const TextStyle(color: Colors.green)),
+          ),
         ],
       ),
     );
@@ -286,7 +331,43 @@ class _UserDashboardState extends State<UserDashboard> {
       currentIndex: _selectedIndex,
       selectedItemColor: Colors.green,
       unselectedItemColor: Colors.black,
-      onTap: _onItemTapped,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+        switch (index) {
+          case 0:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const RentScreen()),
+            );
+            break;
+          case 1:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const StoreScreen()),
+            );
+            break;
+          case 2:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AddItemScreen()),
+            );
+            break;
+          case 3:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CartScreen()),
+            );
+            break;
+          case 4:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfileScreen()),
+            );
+            break;
+        }
+      },
     );
   }
 }

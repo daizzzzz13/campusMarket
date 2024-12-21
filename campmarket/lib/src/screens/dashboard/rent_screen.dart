@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'main_navigation.dart';
+import 'exchange_screen.dart'; // Import the ExchangeScreen
+import 'sell_screen.dart'; // Import the SellScreen
+import 'tutoring_screen.dart'; // Import the TutoringScreen
+import 'user_dashboard.dart'; // Import UserDashboard for navigation
+import 'store_screen.dart'; // Import the StoreScreen
+import 'add_item_screen.dart'; // Import the AddItemScreen
+import 'cart_screen.dart'; // Import the CartScreen
 
 class RentScreen extends StatefulWidget {
-  const RentScreen({super.key});
+  final int currentIndex;
+  const RentScreen({super.key, this.currentIndex = 0});
 
   @override
   State<RentScreen> createState() => _RentScreenState();
 }
 
 class _RentScreenState extends State<RentScreen> {
-  String activeCategory = 'Rent'; // Default to Rent
+  String activeCategory = 'Rent';
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.currentIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +66,7 @@ class _RentScreenState extends State<RentScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
 
             Expanded(
               child: GridView.count(
@@ -76,6 +91,7 @@ class _RentScreenState extends State<RentScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -86,15 +102,46 @@ class _RentScreenState extends State<RentScreen> {
         setState(() {
           activeCategory = text;
         });
+
+        switch (text) {
+          case 'Exchange':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ExchangeScreen(),
+              ),
+            );
+            break;
+          case 'Sell':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SellScreen(),
+              ),
+            );
+            break;
+          case 'Tutoring':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TutoringScreen(),
+              ),
+            );
+            break;
+          default:
+            break;
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.green : Colors.blue[200],
-        foregroundColor: isSelected ? Colors.white : Colors.black,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      child: Text(text),
+      child: Text(
+        text,
+        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+      ),
     );
   }
 
@@ -151,6 +198,73 @@ class _RentScreenState extends State<RentScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_circle_outline),
+          label: 'Add',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.black,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+        switch (index) {
+          case 0:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const UserDashboard()),
+            );
+            break;
+          case 1:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const StoreScreen()),
+            );
+            break;
+          case 2:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AddItemScreen()),
+            );
+            break;
+          case 3:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CartScreen()),
+            );
+            break;
+          case 4:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const UserDashboard()),
+            );
+            break;
+        }
+      },
     );
   }
 }

@@ -1,38 +1,27 @@
 import 'package:flutter/material.dart';
-import 'rent_screen.dart';
-import 'exchange_screen.dart';
-import 'sell_screen.dart';
-import 'tutoring_screen.dart';
-import 'store_screen.dart';
-import 'add_item_screen.dart';
-import 'user_dashboard.dart';
-import 'profile_screen.dart';
+import 'rent_screen.dart'; // Import RentScreen
+import 'sell_screen.dart'; // Import SellScreen
+import 'exchange_screen.dart'; // Import ExchangeScreen
+import 'user_dashboard.dart'; // Import UserDashboard for navigation
 
-class CartScreen extends StatefulWidget {
-  final int currentIndex;
-  const CartScreen({Key? key, this.currentIndex = 3}) : super(key: key);
+class TutoringScreen extends StatefulWidget {
+  const TutoringScreen({Key? key}) : super(key: key);
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  _TutoringScreenState createState() => _TutoringScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
-  late int _selectedIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedIndex = widget.currentIndex;
-  }
+class _TutoringScreenState extends State<TutoringScreen> {
+  int _selectedIndex = 3; // Set the index for Tutoring
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cart'),
+        title: const Text('Tutoring'),
       ),
-      body: Center(
-        child: const Text('Your Cart Items'),
+      body: const Center(
+        child: Text('Tutoring Screen'),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
@@ -47,15 +36,15 @@ class _CartScreenState extends State<CartScreen> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.store),
-          label: 'Store',
+          label: 'Exchange',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.add_circle_outline),
-          label: 'Add',
+          label: 'Sell',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart),
-          label: 'Cart',
+          icon: Icon(Icons.school),
+          label: 'Tutoring',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
@@ -67,37 +56,37 @@ class _CartScreenState extends State<CartScreen> {
       unselectedItemColor: Colors.black,
       onTap: (index) {
         setState(() {
-          _selectedIndex = index;
+          _selectedIndex = index; // Update the selected index
         });
         switch (index) {
           case 0:
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const UserDashboard()),
+              MaterialPageRoute(builder: (context) => const RentScreen()),
             );
             break;
           case 1:
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const StoreScreen()),
+              MaterialPageRoute(builder: (context) => const ExchangeScreen()),
             );
             break;
           case 2:
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const AddItemScreen()),
+              MaterialPageRoute(builder: (context) => const SellScreen()),
             );
             break;
           case 3:
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const CartScreen()),
+              MaterialPageRoute(builder: (context) => const TutoringScreen()),
             );
             break;
           case 4:
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              MaterialPageRoute(builder: (context) => const UserDashboard()),
             );
             break;
         }
