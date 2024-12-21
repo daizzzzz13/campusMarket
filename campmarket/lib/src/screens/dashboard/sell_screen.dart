@@ -13,19 +13,17 @@ class SellScreen extends StatefulWidget {
 }
 
 class _SellScreenState extends State<SellScreen> {
-  String activeCategory = '';
-  int _selectedIndex = 1;
+  int _selectedIndex = 2; // Default to Sell
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sell'),
+        backgroundColor: const Color(0xFF4DE165),
       ),
-      body: Column(
-        children: [
-          // Your existing UI code
-        ],
+      body: Center(
+        child: Text('Sell Screen Content'), // Replace with your content
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -62,27 +60,39 @@ class _SellScreenState extends State<SellScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    
-    if (index != _selectedIndex) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) {
-          switch (index) {
-            case 0:
-              return const UserDashboard();
-            case 1:
-              return const StoreScreen();
-            case 2:
-              return const AddItemScreen();
-            case 3:
-              return const CartScreen();
-            case 4:
-              return const ProfileScreen();
-            default:
-              return const SellScreen();
-          }
-        }),
-      );
+
+    // Navigate to the selected screen
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const UserDashboard()),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const StoreScreen()),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SellScreen()),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CartScreen()),
+        );
+        break;
+      case 4:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        );
+        break;
     }
   }
 }
