@@ -66,38 +66,16 @@ class ProfileScreen extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
+      title: const Text('Profile'),
       backgroundColor: const Color(0xFF4DE165),
-      title: Row(
-        children: [
-          const CircleAvatar(
-            backgroundImage: AssetImage('assets/images/logo.png'),
-            radius: 20,
-          ),
-          const SizedBox(width: 8),
-          const Text(
-            'Campus Marketing',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade200,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: const Text(
-              'Pro',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.notifications, color: Colors.white),
-        ],
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications),
+          onPressed: () {
+            // Handle notification action
+          },
+        ),
+      ],
     );
   }
 
