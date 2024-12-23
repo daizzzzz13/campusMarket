@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'settings_screen.dart';
+import 'rent_posts_screen.dart';
+import 'sell_posts_screen.dart';
+import 'exchange_posts_screen.dart';
+import 'tutorials_screen.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({Key? key}) : super(key: key);
@@ -14,7 +19,7 @@ class AdminDashboard extends StatelessWidget {
           children: [
             _buildSearchBar(),
             const SizedBox(height: 16),
-            _buildPostStats(),
+            _buildPostStats(context),
             const SizedBox(height: 16),
             _buildPopularItems(),
             const SizedBox(height: 16),
@@ -22,7 +27,7 @@ class AdminDashboard extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -30,6 +35,7 @@ class AdminDashboard extends StatelessWidget {
     return AppBar(
       title: const Text('Campus Marketing'),
       backgroundColor: const Color(0xFF4DE165),
+      automaticallyImplyLeading: false,
       actions: [
         IconButton(
           icon: const Icon(Icons.notifications),
@@ -44,30 +50,60 @@ class AdminDashboard extends StatelessWidget {
   Widget _buildSearchBar() {
     return TextField(
       decoration: InputDecoration(
-        hintText: 'search',
+        hintText: 'Search',
         border: OutlineInputBorder(),
       ),
     );
   }
 
-  Widget _buildPostStats() {
+  Widget _buildPostStats(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildStatCard('Rent Posts', '2 posts'),
-        _buildStatCard('Sell Posts', '5 posts'),
-        _buildStatCard('Exchange Posts', '1 post'),
-        _buildStatCard('Tutorials', '10 posts'),
+        _buildStatButton('Rent Posts', '2 posts', () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RentPostsScreen()),
+          );
+        }),
+        _buildStatButton('Sell Posts', '5 posts', () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SellPostsScreen()),
+          );
+        }),
+        _buildStatButton('Exchange Posts', '1 post', () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ExchangePostsScreen()),
+          );
+        }),
+        _buildStatButton('Tutorials', '10 posts', () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const TutorialsScreen()),
+          );
+        }),
       ],
     );
   }
 
-  Widget _buildStatCard(String title, String count) {
-    return Column(
-      children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text(count),
-      ],
+  Widget _buildStatButton(String title, String count, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        decoration: BoxDecoration(
+          color: const Color(0xFF4DE165),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text(count, style: const TextStyle(color: Colors.white)),
+          ],
+        ),
+      ),
     );
   }
 
@@ -76,16 +112,24 @@ class AdminDashboard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Popular', style: TextStyle(fontWeight: FontWeight.bold)),
-        // Add your popular items here
-        // Example item
-        Row(
+        _buildPopularItem('assets/images/calculator.jpg', 'Scientific Calculator', '₱10 per Hour'),
+        _buildPopularItem('assets/images/lab_gown.jpg', 'Lab Gown', '₱20 per Hour'),
+      ],
+    );
+  }
+
+  Widget _buildPopularItem(String imageUrl, String itemName, String price) {
+    return Row(
+      children: [
+        Image.asset(imageUrl, width: 50, height: 50),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network('https://example.com/item1.jpg', width: 50, height: 50),
-            const Text('Item for Rent: Scientific Calculator'),
-            const Text('₱10 per Hour'),
+            Text('Item for Rent: $itemName'),
+            Text(price, style: const TextStyle(color: Colors.orange)),
           ],
         ),
-        // Add more items as needed
       ],
     );
   }
@@ -95,23 +139,24 @@ class AdminDashboard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Top Rated Users', style: TextStyle(fontWeight: FontWeight.bold)),
-        // Add your top-rated users here
-        // Example user
-        Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage('https://example.com/user.jpg'),
-            ),
-            const SizedBox(width: 8),
-            const Text('Sudai Alhad ⭐ 4.9'),
-          ],
-        ),
-        // Add more users as needed
+        _buildTopRatedUser('assets/images/profile.jpg', 'Sudai Alhad', '4.9'),
       ],
     );
   }
 
-  Widget _buildBottomNavigationBar() {
+  Widget _buildTopRatedUser(String imageUrl, String userName, String rating) {
+    return Row(
+      children: [
+        CircleAvatar(
+          backgroundImage: AssetImage(imageUrl),
+        ),
+        const SizedBox(width: 8),
+        Text('$userName ⭐ $rating'),
+      ],
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
@@ -122,13 +167,17 @@ class AdminDashboard extends StatelessWidget {
           icon: Icon(Icons.settings),
           label: 'Settings',
         ),
-        // Add more items as needed
       ],
-      currentIndex: 0, // Set the current index as needed
+      currentIndex: 0,
       selectedItemColor: Colors.green,
       unselectedItemColor: Colors.black,
       onTap: (index) {
-        // Handle navigation
+        if (index == 1) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingsScreen()),
+          );
+        }
       },
     );
   }
