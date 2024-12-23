@@ -7,6 +7,7 @@ import 'src/screens/dashboard/store_screen.dart';
 import 'src/screens/dashboard/cart_screen.dart';
 import 'src/screens/auth/login_screen.dart';
 import 'src/screens/auth/register_screen.dart';
+import 'src/screens/dashboard/admin_dashboard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/exchange': (context) => const ExchangeScreen(),
         '/store': (context) => const StoreScreen(),
         '/cart': (context) => const CartScreen(),
+        '/admin_dashboard': (context) => const AdminDashboard(),
       },
     );
   }

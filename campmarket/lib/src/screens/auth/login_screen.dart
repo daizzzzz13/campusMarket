@@ -27,9 +27,36 @@ class _LoginScreenState extends State<LoginScreen> {
         password: password,
       );
 
-      if (response.user != null) {
-        print('Login successful');
-        Navigator.pushReplacementNamed(context, '/user_dashboard');
+      if (response.session != null) {
+        print('Login successful!');
+
+        // Fetch the user's role from the profiles table
+        final userId = response.user!.id;
+        final profileResponse = await Supabase.instance.client
+            .from('profiles')
+            .select('role')
+            .eq('id', userId)
+            .maybeSingle(); // Fetch a single row if it exists
+
+        if (profileResponse != null) {
+          final role = profileResponse['role'] as String?;
+
+          // Navigate based on the role
+          switch (role) {
+            case 'admin':
+              Navigator.pushNamed(context, '/admin_dashboard');
+              break;
+            case 'user':
+              Navigator.pushNamed(context, '/user_dashboard');
+              break;
+            default:
+              _showSnackBar('Unknown role: $role');
+          }
+        } else {
+          _showSnackBar('Profile not found for this user');
+        }
+      } else {
+        _showSnackBar('Invalid email or password');
       }
     } catch (error) {
       print('Login error: $error');

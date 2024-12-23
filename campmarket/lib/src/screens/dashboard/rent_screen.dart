@@ -7,6 +7,7 @@ import 'user_dashboard.dart'; // Import UserDashboard for navigation
 import 'store_screen.dart'; // Import the StoreScreen
 import 'add_item_screen.dart'; // Import the AddItemScreen
 import 'cart_screen.dart'; // Import the CartScreen
+import 'rent_items_screen.dart'; // Import the new RentItemsScreen
 
 class RentScreen extends StatefulWidget {
   final int currentIndex;
@@ -77,7 +78,7 @@ class _RentScreenState extends State<RentScreen> {
                 children: [
                   _buildPopularItem(
                     'Scientific Calculator',
-                    '₱20 per Hour',
+                    '₱50 per Day',
                     'assets/images/calculator.jpg',
                   ),
                   _buildPopularItem(
@@ -108,7 +109,7 @@ class _RentScreenState extends State<RentScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => ExchangeScreen(),
+                builder: (context) => const ExchangeScreen(),
               ),
             );
             break;
@@ -116,7 +117,7 @@ class _RentScreenState extends State<RentScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => SellScreen(),
+                builder: (context) => const SellScreen(),
               ),
             );
             break;
@@ -124,7 +125,7 @@ class _RentScreenState extends State<RentScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => TutoringScreen(),
+                builder: (context) => const TutoringScreen(),
               ),
             );
             break;
@@ -183,7 +184,11 @@ class _RentScreenState extends State<RentScreen> {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () {
-                    // Handle rent action
+                    // Navigate to RentItemsScreen when "Rent Now" is clicked
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RentItemsScreen()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
