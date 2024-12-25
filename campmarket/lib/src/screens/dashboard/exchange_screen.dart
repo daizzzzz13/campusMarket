@@ -13,33 +13,27 @@ class ExchangeScreen extends StatefulWidget {
 }
 
 class _ExchangeScreenState extends State<ExchangeScreen> {
-  String activeCategory = 'Exchange';
-  late int _selectedIndex = 1; // Default to Store
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Exchange'),
         backgroundColor: const Color(0xFF4DE165),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const UserDashboard()), // Navigate to UserDashboard
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Category Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildCategoryButton('Exchange'),
-                _buildCategoryButton('Sell'),
-                _buildCategoryButton('Rent'),
-                _buildCategoryButton('Tutoring'),
-              ],
-            ),
-            const SizedBox(height: 20),
-
             // Search Bar
             TextField(
               decoration: InputDecoration(
@@ -86,57 +80,6 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
-
-  Widget _buildCategoryButton(String text) {
-    final bool isSelected = activeCategory == text;
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          activeCategory = text;
-        });
-
-        // Handle navigation based on category
-        switch (text) {
-          case 'Sell':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserDashboard(), // Replace with SellScreen
-              ),
-            );
-            break;
-          case 'Rent':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserDashboard(), // Replace with RentScreen
-              ),
-            );
-            break;
-          case 'Tutoring':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserDashboard(), // Replace with TutoringScreen
-              ),
-            );
-            break;
-          default:
-            break;
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.green : Colors.blue[200],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
-      ),
     );
   }
 
@@ -220,14 +163,11 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
           label: 'Profile',
         ),
       ],
-      currentIndex: _selectedIndex,
+      currentIndex: 0, // Adjust as needed
       selectedItemColor: Colors.green,
       unselectedItemColor: Colors.black,
       onTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-        // Navigate to the selected screen
+        // Handle navigation based on index
         switch (index) {
           case 0:
             Navigator.pushReplacement(

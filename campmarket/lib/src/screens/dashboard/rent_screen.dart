@@ -18,7 +18,6 @@ class RentScreen extends StatefulWidget {
 }
 
 class _RentScreenState extends State<RentScreen> {
-  String activeCategory = 'Rent';
   late int _selectedIndex;
 
   @override
@@ -30,23 +29,24 @@ class _RentScreenState extends State<RentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rent Item'),
+        backgroundColor: const Color(0xFF4DE165),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const UserDashboard()),
+            );
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Category Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildCategoryButton('Rent'),
-                _buildCategoryButton('Exchange'),
-                _buildCategoryButton('Sell'),
-                _buildCategoryButton('Tutoring'),
-              ],
-            ),
-            const SizedBox(height: 20),
-
             // Search Bar
             TextField(
               decoration: InputDecoration(
@@ -93,56 +93,6 @@ class _RentScreenState extends State<RentScreen> {
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
-
-  Widget _buildCategoryButton(String text) {
-    final bool isSelected = activeCategory == text;
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          activeCategory = text;
-        });
-
-        switch (text) {
-          case 'Exchange':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ExchangeScreen(),
-              ),
-            );
-            break;
-          case 'Sell':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SellScreen(),
-              ),
-            );
-            break;
-          case 'Tutoring':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const TutoringScreen(),
-              ),
-            );
-            break;
-          default:
-            break;
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.green : Colors.blue[200],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
-      ),
     );
   }
 

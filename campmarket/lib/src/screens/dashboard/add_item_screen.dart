@@ -4,6 +4,10 @@ import 'user_dashboard.dart';
 import 'store_screen.dart';
 import 'cart_screen.dart';
 import 'profile_screen.dart';
+import 'rent_screen.dart';
+import 'exchange_screen.dart';
+import 'sell_screen.dart';
+import 'tutoring_screen.dart';
 
 class AddItemScreen extends StatelessWidget {
   const AddItemScreen({Key? key}) : super(key: key);
@@ -11,16 +15,15 @@ class AddItemScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Item'),
-        backgroundColor: const Color(0xFF4DE165),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Top App Bar with Logo and Title
+              _buildAppBar(context),
+
               // Search Bar
               TextField(
                 decoration: InputDecoration(
@@ -31,6 +34,10 @@ class AddItemScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+
+              // Category Buttons
+              _buildCategorySection(context),
               const SizedBox(height: 16),
 
               // Add Photo Button
@@ -88,56 +95,156 @@ class AddItemScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: _buildBottomNavigationBar(context),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 10),
+      color: const Color(0xFF4DE165),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            backgroundImage: AssetImage('assets/images/logo.png'),
+            radius: 20,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.store),
-            label: 'Store',
+          const SizedBox(width: 8),
+          const Text(
+            'Campus Marketing',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline), // Add icon
-            label: 'Add',
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade200,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: const Text(
+              'Pro',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.notifications, color: Colors.white),
         ],
-        currentIndex: 2, // Set the index for the Add Item screen
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.black,
-        onTap: (index) {
-          // Handle navigation based on the selected index
-          if (index != 2) {
-            // Navigate to the selected screen
+      ),
+    );
+  }
+
+  Widget _buildCategorySection(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildCategoryButton('Rent', context),
+        _buildCategoryButton('Exchange', context),
+        _buildCategoryButton('Sell', context),
+        _buildCategoryButton('Tutoring', context),
+      ],
+    );
+  }
+
+  Widget _buildCategoryButton(String text, BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        // Navigate to the corresponding screen using pushReplacement
+        switch (text) {
+          case 'Rent':
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) {
-                switch (index) {
-                  case 0:
-                    return const UserDashboard(); // Home
-                  case 1:
-                    return const StoreScreen(); // Store
-                  case 3:
-                    return const CartScreen(); // Cart
-                  case 4:
-                    return const ProfileScreen(); // Profile
-                  default:
-                    return const AddItemScreen(); // Stay on Add Item
-                }
-              }),
+              MaterialPageRoute(builder: (context) => const RentScreen()),
             );
-          }
-        },
+            break;
+          case 'Exchange':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ExchangeScreen()),
+            );
+            break;
+          case 'Sell':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SellScreen()),
+            );
+            break;
+          case 'Tutoring':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TutoringScreen()),
+            );
+            break;
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue[200],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_circle_outline), // Add icon
+          label: 'Add',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ],
+      currentIndex: 2, // Set the index for the Add Item screen
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.black,
+      onTap: (index) {
+        // Handle navigation based on the selected index
+        if (index != 2) {
+          // Navigate to the selected screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) {
+              switch (index) {
+                case 0:
+                  return const UserDashboard(); // Home
+                case 1:
+                  return const StoreScreen(); // Store
+                case 3:
+                  return const CartScreen(); // Cart
+                case 4:
+                  return const ProfileScreen(); // Profile
+                default:
+                  return const AddItemScreen(); // Stay on Add Item
+              }
+            }),
+          );
+        }
+      },
     );
   }
 

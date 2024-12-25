@@ -1,157 +1,194 @@
 import 'package:flutter/material.dart';
-import 'main_navigation.dart'; // Ensure this import is present
-import 'user_dashboard.dart'; // Import UserDashboard
-import 'cart_screen.dart';    // Import CartScreen
-import 'store_screen.dart';   // Import StoreScreen
-import 'add_item_screen.dart'; // Import AddItemScreen
-import '../auth/login_screen.dart'; // Import your LoginScreen
-import 'exchange_screen.dart'; // Import the ExchangeScreen
-import 'sell_screen.dart'; // Import the SellScreen
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'user_dashboard.dart';
+import 'cart_screen.dart';
+import 'store_screen.dart';
+import 'add_item_screen.dart';
+import '../auth/login_screen.dart';
+import 'exchange_screen.dart';
+import 'sell_screen.dart';
 import 'tutoring_screen.dart';
-import 'rent_screen.dart'; // Import the TutoringScreen
+import 'rent_screen.dart';
+import 'edit_name_screen.dart'; // Import the edit screen
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String? _firstName;
+  String? _lastName;
+  String? _email;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserInfo();
+  }
+
+  /// Fetch user information from Supabase
+  Future<void> _fetchUserInfo() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+
+      if (user != null) {
+        final response = await Supabase.instance.client
+            .from('profiles')
+            .select('first_name, last_name, email')
+            .eq('id', user.id)
+            .single();
+
+        if (response != null) {
+          setState(() {
+            _firstName = response['first_name'];
+            _lastName = response['last_name'];
+            _email = response['email'];
+            _isLoading = false;
+          });
+          print('Fetched profile: $_firstName $_lastName');
+        } else {
+          setState(() {
+            _firstName = 'First';
+            _lastName = 'Last';
+            _email = 'No email available';
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching user info: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Refresh profile information after editing
+  void _refreshProfile() {
+    setState(() {
+      _isLoading = true;
+    });
+    _fetchUserInfo();
+  }
+
+  /// Logout logic
+  Future<void> _logout() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+      Navigator.pushReplacementNamed(context, '/login'); // Adjust your login route
+    } catch (e) {
+      print('Error logging out: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to log out. Please try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          _buildCategorySection(context),
-          _buildSearchBar(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage('https://example.com/profile.jpg'),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Sudai Alhad', style: TextStyle(fontSize: 24)),
-                    Text('sudai.alhad@one.uz.edu.ph', style: TextStyle(fontSize: 16)),
-                    Text('⭐ 4.9', style: TextStyle(fontSize: 16)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                _buildListTile(context, Icons.inbox, 'Inbox', () {}),
-                _buildListTile(context, Icons.shopping_cart, 'Rent Item', () {}),
-                _buildListTile(context, Icons.swap_horiz, 'Exchange', () {}),
-                _buildListTile(context, Icons.label, 'Sell', () {}),
-                _buildListTile(context, Icons.video_library, 'Tutoring Video', () {}),
-                _buildListTile(context, Icons.help, 'Help and Support', () {}),
-                _buildListTile(context, Icons.settings, 'Setting', () {}),
-                _buildListTile(context, Icons.logout, 'Log Out', () {
-                  _logout(context);
-                }),
-              ],
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: const Color(0xFF4DE165),
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.purple.shade200,
+                        child: const Icon(Icons.person, size: 30, color: Colors.white),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${_firstName ?? ''} ${_lastName ?? ''}',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditNameScreen(
+                                          firstName: _firstName ?? '',
+                                          lastName: _lastName ?? '',
+                                          onUpdate: _refreshProfile,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            Text(
+                              _email ?? 'No email available',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const Text(
+                              '⭐ 4.9',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _buildListTile(Icons.inbox, 'Inbox', () => _navigateTo('Inbox')),
+                        _buildListTile(Icons.shopping_cart, 'Rent Item', () => _navigateTo('Rent Item')),
+                        _buildListTile(Icons.swap_horiz, 'Exchange', () => _navigateTo('Exchange')),
+                        _buildListTile(Icons.label, 'Sell', () => _navigateTo('Sell')),
+                        _buildListTile(Icons.video_library, 'Tutoring Video', () => _navigateTo('Tutoring Video')),
+                        _buildListTile(Icons.help, 'Help and Support', () => _navigateTo('Help and Support')),
+                        _buildListTile(Icons.settings, 'Setting', () => _navigateTo('Setting')),
+                        _buildListTile(Icons.logout, 'Logout', _logout), // Added logout button
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
       bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      title: const Text('Profile'),
-      backgroundColor: const Color(0xFF4DE165),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications),
-          onPressed: () {
-            // Handle notification action
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCategorySection(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildCategoryButton(context, 'Rent'),
-          _buildCategoryButton(context, 'Exchange'),
-          _buildCategoryButton(context, 'Sell'),
-          _buildCategoryButton(context, 'Tutoring'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryButton(BuildContext context, String text) {
-    return ElevatedButton(
-      onPressed: () {
-        // Navigate to the corresponding screen using pushReplacement
-        switch (text) {
-          case 'Rent':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const RentScreen()),
-            );
-            break;
-          case 'Exchange':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const ExchangeScreen()),
-            );
-            break;
-          case 'Sell':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SellScreen()),
-            );
-            break;
-          case 'Tutoring':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const TutoringScreen()),
-            );
-            break;
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[200],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.black,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search',
-          suffixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
+  Widget _buildListTile(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: onTap,
     );
   }
 
@@ -167,7 +204,7 @@ class ProfileScreen extends StatelessWidget {
           label: 'Store',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle_outline), // Add icon
+          icon: Icon(Icons.add_circle_outline),
           label: 'Add',
         ),
         BottomNavigationBarItem(
@@ -179,51 +216,32 @@ class ProfileScreen extends StatelessWidget {
           label: 'Profile',
         ),
       ],
-      currentIndex: 4, // Set the index for the Profile screen
+      currentIndex: 4, // Set to Profile tab
       selectedItemColor: Colors.green,
       unselectedItemColor: Colors.black,
       onTap: (index) {
-        // Handle navigation based on the selected index
-        if (index != 4) {
-          // Navigate to the selected screen
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) {
-              switch (index) {
-                case 0:
-                  return const UserDashboard(); // Home
-                case 1:
-                  return const StoreScreen(); // Store
-                case 2:
-                  return const AddItemScreen(); // Add Item
-                case 3:
-                  return const CartScreen(); // Cart
-                default:
-                  return const ProfileScreen(); // Stay on Profile
-              }
-            }),
-          );
+        switch (index) {
+          case 0:
+            Navigator.pushReplacementNamed(context, '/user_dashboard');
+            break;
+          case 1:
+            Navigator.pushReplacementNamed(context, '/store');
+            break;
+          case 2:
+            Navigator.pushReplacementNamed(context, '/add_item');
+            break;
+          case 3:
+            Navigator.pushReplacementNamed(context, '/cart');
+            break;
+          case 4:
+            // Already on Profile screen, do nothing
+            break;
         }
       },
     );
   }
 
-  void _logout(BuildContext context) {
-    // Clear user session (e.g., remove token, clear preferences)
-    // Example: await SharedPreferences.getInstance().then((prefs) => prefs.clear());
-
-    // Navigate to the login screen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()), // Adjust to your actual login screen
-    );
-  }
-
-  Widget _buildListTile(BuildContext context, IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: onTap,
-    );
+  void _navigateTo(String title) {
+    print('Navigating to $title'); // Placeholder for navigation logic
   }
 }
