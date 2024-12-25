@@ -5,17 +5,36 @@ import 'store_screen.dart';   // Import StoreScreen
 import 'add_item_screen.dart'; // Import AddItemScreen
 import 'profile_screen.dart'; // Import ProfileScreen
 import 'exchange_screen.dart';
+import 'rent_screen.dart';
+import 'sell_screen.dart';
+import 'tutoring_screen.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
+
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  // List to hold cart items
+  List<Map<String, String>> cartItems = [
+    {'title': 'Scientific Calculator', 'price': '₱10 per Hour', 'imagePath': 'assets/images/calculator.jpg'},
+    // Removed 'Lab Gown' item
+    // Add more items as needed
+  ];
+
+  void _removeItem(int index) {
+    setState(() {
+      cartItems.removeAt(index); // Remove item from the list
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView( // Make the body scrollable
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Custom Header
             _buildHeader(),
@@ -23,49 +42,44 @@ class CartScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Category Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildCategoryButton(context, 'Rent', const UserDashboard()),
-                _buildCategoryButton(context, 'Exchange', const UserDashboard()),
-                _buildCategoryButton(context, 'Sell', const UserDashboard()),
-                _buildCategoryButton(context, 'Tutoring', const UserDashboard()),
-              ],
-            ),
-
+            _buildCategorySection(context),
             const SizedBox(height: 20),
 
             // Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search',
-                suffixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-
+            _buildSearchBar(),
             const SizedBox(height: 20),
 
             // Cart Items Section
-            const Text(
-              'Items in Your Cart',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start, // Align to the left
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 16.0), // Add some left padding
+                  child: Text(
+                    'Items in Your Cart',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
 
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildCartItem('Scientific Calculator', '₱10 per Hour', 'assets/images/calculator.jpg'),
-                  _buildCartItem('Lab Gown', '₱20 per Hour', 'assets/images/lab_gown.jpg'),
-                  // Add more cart items as needed
-                ],
-              ),
+            // List of cart items
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the inner ListView
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                return _buildCartItem(
+                  cartItems[index]['title']!,
+                  cartItems[index]['price']!,
+                  cartItems[index]['imagePath']!,
+                  index,
+                );
+              },
             ),
           ],
         ),
@@ -77,78 +91,52 @@ class CartScreen extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.only(top: 40, left: 16, right: 16, bottom: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFF4DE165), // Header background color
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-      ),
+      color: const Color(0xFF4DE165), // Header background color
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Image.asset('assets/images/logo.png', height: 40), // Replace with your logo path
-              const SizedBox(width: 8),
-              const Text(
-                'Campus Marketing',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20, // Adjusted font size
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+          const CircleAvatar(
+            backgroundImage: AssetImage('assets/images/logo.png'),
+            radius: 20,
           ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Handle Pro button action
-                },
-                child: const Text('Pro'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Button color
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjusted padding
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.notifications, color: Colors.white),
-                onPressed: () {
-                  // Handle notification action
-                },
-              ),
-            ],
+          const SizedBox(width: 8),
+          const Text(
+            'Campus Marketing',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade200,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: const Text(
+              'Pro',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.notifications, color: Colors.white),
         ],
       ),
     );
   }
 
-  Widget _buildCartItem(String title, String price, String imagePath) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Image.asset(imagePath, height: 60, width: 60, fit: BoxFit.cover),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(price, style: const TextStyle(color: Colors.green)),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-              onPressed: () {
-                // Handle remove item from cart
-              },
-            ),
-          ],
-        ),
+  Widget _buildCategorySection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildCategoryButton(context, 'Rent', const RentScreen()),
+          _buildCategoryButton(context, 'Exchange', const ExchangeScreen()),
+          _buildCategoryButton(context, 'Sell', const SellScreen()),
+          _buildCategoryButton(context, 'Tutoring', const TutoringScreen()),
+        ],
       ),
     );
   }
@@ -170,6 +158,49 @@ class CartScreen extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(color: Colors.black),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search',
+          suffixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCartItem(String title, String price, String imagePath, int index) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Image.asset(imagePath, height: 60, width: 60, fit: BoxFit.cover),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(price, style: const TextStyle(color: Colors.green)),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+              onPressed: () => _removeItem(index), // Call remove function
+            ),
+          ],
+        ),
       ),
     );
   }

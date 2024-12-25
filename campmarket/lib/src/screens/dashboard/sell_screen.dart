@@ -95,6 +95,10 @@ class _SellScreenState extends State<SellScreen> {
               );
               break;
             case 2:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AddItemScreen()),
+              );
               // Stay on Sell Screen
               break; // No action needed
             case 3:

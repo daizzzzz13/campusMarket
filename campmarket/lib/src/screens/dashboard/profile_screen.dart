@@ -10,6 +10,8 @@ import 'sell_screen.dart';
 import 'tutoring_screen.dart';
 import 'rent_screen.dart';
 import 'edit_name_screen.dart'; // Import the edit screen
+import 'package:image_picker/image_picker.dart'; // Import the image_picker package
+import 'dart:io'; // Import dart:io for File
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -23,6 +25,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _lastName;
   String? _email;
   bool _isLoading = true;
+  XFile? _image; // Variable to hold the selected image
+
+  final ImagePicker _picker = ImagePicker(); // Create an instance of ImagePicker
 
   @override
   void initState() {
@@ -88,99 +93,182 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Function to pick an image
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _image = image; // Update the state with the selected image
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: const Color(0xFF4DE165),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildAppBar(),
+            const SizedBox(height: 20),
+            _buildCategorySection(context),
+            const SizedBox(height: 20),
+            _buildSearchBar(),
+            const SizedBox(height: 20),
+            _buildProfileInfo(),
+            const SizedBox(height: 20),
+            _buildOptionsList(),
+          ],
+        ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.purple.shade200,
-                        child: const Icon(Icons.person, size: 30, color: Colors.white),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '${_firstName ?? ''} ${_lastName ?? ''}',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditNameScreen(
-                                          firstName: _firstName ?? '',
-                                          lastName: _lastName ?? '',
-                                          onUpdate: _refreshProfile,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            Text(
-                              _email ?? 'No email available',
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const Text(
-                              '⭐ 4.9',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.orange,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        _buildListTile(Icons.inbox, 'Inbox', () => _navigateTo('Inbox')),
-                        _buildListTile(Icons.shopping_cart, 'Rent Item', () => _navigateTo('Rent Item')),
-                        _buildListTile(Icons.swap_horiz, 'Exchange', () => _navigateTo('Exchange')),
-                        _buildListTile(Icons.label, 'Sell', () => _navigateTo('Sell')),
-                        _buildListTile(Icons.video_library, 'Tutoring Video', () => _navigateTo('Tutoring Video')),
-                        _buildListTile(Icons.help, 'Help and Support', () => _navigateTo('Help and Support')),
-                        _buildListTile(Icons.settings, 'Setting', () => _navigateTo('Setting')),
-                        _buildListTile(Icons.logout, 'Logout', _logout), // Added logout button
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
       bottomNavigationBar: _buildBottomNavigationBar(context),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return Container(
+      padding: const EdgeInsets.only(top: 40, left: 16, right: 16, bottom: 10),
+      color: const Color(0xFF4DE165),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            backgroundImage: AssetImage('assets/images/logo.png'),
+            radius: 20,
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            'Campus Marketing',
+            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(color: Colors.blue.shade200, borderRadius: BorderRadius.circular(15)),
+            child: const Text('Pro', style: TextStyle(color: Colors.white)),
+          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.notifications, color: Colors.white),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategorySection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildCategoryButton('Rent', context),
+          _buildCategoryButton('Exchange', context),
+          _buildCategoryButton('Sell', context),
+          _buildCategoryButton('Tutoring', context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryButton(String text, BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        // Navigate to the corresponding screen
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue[200],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      child: Text(text, style: const TextStyle(color: Colors.black)),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search',
+          suffixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileInfo() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: _pickImage, // Call the image picker on tap
+            child: CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.purple.shade200,
+              backgroundImage: _image != null ? FileImage(File(_image!.path)) : null, // Show the selected image
+              child: _image == null ? const Icon(Icons.person, size: 30, color: Colors.white) : null,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${_firstName ?? ''} ${_lastName ?? ''}',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditNameScreen(
+                              firstName: _firstName ?? '',
+                              lastName: _lastName ?? '',
+                              onUpdate: _refreshProfile,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Text(
+                  _email ?? 'No email available',
+                  style: const TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+                const Text(
+                  '⭐ 4.9',
+                  style: TextStyle(fontSize: 16, color: Colors.orange),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptionsList() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          _buildListTile(Icons.inbox, 'Inbox', () => _navigateTo('Inbox')),
+          _buildListTile(Icons.shopping_cart, 'Rent Item', () => _navigateTo('Rent Item')),
+          _buildListTile(Icons.swap_horiz, 'Exchange', () => _navigateTo('Exchange')),
+          _buildListTile(Icons.label, 'Sell', () => _navigateTo('Sell')),
+          _buildListTile(Icons.video_library, 'Tutoring Video', () => _navigateTo('Tutoring Video')),
+          _buildListTile(Icons.help, 'Help and Support', () => _navigateTo('Help and Support')),
+          _buildListTile(Icons.settings, 'Setting', () => _navigateTo('Setting')),
+          _buildListTile(Icons.logout, 'Logout', _logout), // Added logout button
+        ],
+      ),
     );
   }
 
@@ -195,26 +283,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildBottomNavigationBar(BuildContext context) {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle_outline),
-          label: 'Add',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart),
-          label: 'Cart',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Store'),
+        BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
       ],
       currentIndex: 4, // Set to Profile tab
       selectedItemColor: Colors.green,

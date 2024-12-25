@@ -101,6 +101,10 @@ class _TutoringScreenState extends State<TutoringScreen> {
               );
               break;
             case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const CartScreen()),
+              );
               // Stay on Tutoring Screen
               break; // No action needed
             case 4:

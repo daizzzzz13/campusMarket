@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'main_navigation.dart';
 import 'user_dashboard.dart';
 import 'store_screen.dart';
@@ -9,99 +10,102 @@ import 'exchange_screen.dart';
 import 'sell_screen.dart';
 import 'tutoring_screen.dart';
 
-class AddItemScreen extends StatelessWidget {
+class AddItemScreen extends StatefulWidget {
   const AddItemScreen({Key? key}) : super(key: key);
+
+  @override
+  _AddItemScreenState createState() => _AddItemScreenState();
+}
+
+class _AddItemScreenState extends State<AddItemScreen> {
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      // Handle the selected image (e.g., display it or upload it)
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Top App Bar with Logo and Title
-              _buildAppBar(context),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Top App Bar with Logo and Title
+            _buildAppBar(),
 
-              // Search Bar
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  suffixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+            // Category Buttons
+            _buildCategorySection(context),
+            const SizedBox(height: 20), // Consistent spacing
+
+            // Search Bar
+            _buildSearchBar(),
+            const SizedBox(height: 20), // Add spacing below the search bar
+
+            // Add Photo Button
+            GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  '+ Add Photo',
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
-              const SizedBox(height: 16),
+            ),
+            const SizedBox(height: 16),
 
-              // Category Buttons
-              _buildCategorySection(context),
-              const SizedBox(height: 16),
+            // Product Name Field
+            _buildTextField('Product Name *', 'Enter Product Name', 1000),
+            const SizedBox(height: 16),
 
-              // Add Photo Button
-              ElevatedButton(
-                onPressed: () {
-                  // Handle photo upload
-                },
-                child: const Text('+ Add Photo'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[300],
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+            // Product Description Field
+            _buildTextField('Product Description *', 'Enter Product Description', 3000),
+            const SizedBox(height: 16),
+
+            // Category Dropdown
+            _buildDropdown('Category *', ['Rent', 'Sell', 'Exchange', 'Tutoring Video']),
+            const SizedBox(height: 16),
+
+            // Condition Dropdown
+            _buildDropdown('Condition *', ['New', 'Used', 'Old', 'Damaged']),
+            const SizedBox(height: 16),
+
+            // Price Field
+            _buildTextField('Price *', 'Enter Price', 100),
+            const SizedBox(height: 16),
+
+            // Submit Button
+            ElevatedButton(
+              onPressed: () {
+                // Handle item submission
+              },
+              child: const Text('Submit'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              const SizedBox(height: 16),
-
-              // Product Name Field
-              _buildTextField('Product Name *', 'Enter Product Name', 1000),
-              const SizedBox(height: 16),
-
-              // Product Description Field
-              _buildTextField('Product Description *', 'Enter Product Description', 3000),
-              const SizedBox(height: 16),
-
-              // Category Dropdown
-              _buildDropdown('Category *', ['Rent', 'Sell', 'Exchange', 'Tutoring Video']),
-              const SizedBox(height: 16),
-
-              // Condition Dropdown
-              _buildDropdown('Condition *', ['New', 'Used', 'Old', 'Damaged']),
-              const SizedBox(height: 16),
-
-              // Price Field
-              _buildTextField('Price *', 'Enter Price', 100),
-              const SizedBox(height: 16),
-
-              // Submit Button
-              ElevatedButton(
-                onPressed: () {
-                  // Handle item submission
-                },
-                child: const Text('Submit'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
+  Widget _buildAppBar() {
     return Container(
-      padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 10),
+      padding: const EdgeInsets.only(top: 40, left: 16, right: 16, bottom: 10),
       color: const Color(0xFF4DE165),
       child: Row(
         children: [
@@ -138,14 +142,17 @@ class AddItemScreen extends StatelessWidget {
   }
 
   Widget _buildCategorySection(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildCategoryButton('Rent', context),
-        _buildCategoryButton('Exchange', context),
-        _buildCategoryButton('Sell', context),
-        _buildCategoryButton('Tutoring', context),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildCategoryButton('Rent', context),
+          _buildCategoryButton('Exchange', context),
+          _buildCategoryButton('Sell', context),
+          _buildCategoryButton('Tutoring', context),
+        ],
+      ),
     );
   }
 
@@ -195,56 +202,18 @@ class AddItemScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search',
+          suffixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle_outline), // Add icon
-          label: 'Add',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart),
-          label: 'Cart',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
-      currentIndex: 2, // Set the index for the Add Item screen
-      selectedItemColor: Colors.green,
-      unselectedItemColor: Colors.black,
-      onTap: (index) {
-        // Handle navigation based on the selected index
-        if (index != 2) {
-          // Navigate to the selected screen
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) {
-              switch (index) {
-                case 0:
-                  return const UserDashboard(); // Home
-                case 1:
-                  return const StoreScreen(); // Store
-                case 3:
-                  return const CartScreen(); // Cart
-                case 4:
-                  return const ProfileScreen(); // Profile
-                default:
-                  return const AddItemScreen(); // Stay on Add Item
-              }
-            }),
-          );
-        }
-      },
+      ),
     );
   }
 
@@ -285,6 +254,59 @@ class AddItemScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_circle_outline),
+          label: 'Add',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ],
+      currentIndex: 2, // Set the index for the Add Item screen
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.black,
+      onTap: (index) {
+        // Handle navigation based on the selected index
+        if (index != 2) {
+          // Navigate to the selected screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) {
+              switch (index) {
+                case 0:
+                  return const UserDashboard(); // Home
+                case 1:
+                  return const StoreScreen(); // Store
+                case 3:
+                  return const CartScreen(); // Cart
+                case 4:
+                  return const ProfileScreen(); // Profile
+                default:
+                  return const AddItemScreen(); // Stay on Add Item
+              }
+            }),
+          );
+        }
+      },
     );
   }
 }
